@@ -217,7 +217,7 @@ async def main():
     """Main function to run the scraper"""
     scraper = AtlanDocScraper()
     
-    print(" Starting Atlan Documentation Scraper...")
+    print(" Starting Atlan Documentation Scraper")
     print("=" * 50)
     
     # Check if knowledge base already exists

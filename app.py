@@ -375,7 +375,7 @@ def interactive_agent_page(classifier, rag_pipeline):
                 rag_result = run_async(rag_pipeline.generate_answer(question, topic_tags))
                 
                 col1, col2 = st.columns(2)
-                
+
                 with col1:
                     st.subheader("📊 Internal Analysis (Back-end View)")
                     
