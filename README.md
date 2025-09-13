@@ -34,7 +34,7 @@ An enterprise-grade AI customer support system that automatically classifies sup
 
 ## 🚀 Live Demo
 
-**[View Live Application →](https://streamlit-deployment-url.com)**
+**[View Live Application →](https://huggingface.co/spaces/majorSeaweed/atlan)**
 
 ## 🛠️ Technology Stack
 
