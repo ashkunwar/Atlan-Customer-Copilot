@@ -224,10 +224,10 @@ async def main():
     existing_kb = scraper.load_knowledge_base()
     
     if existing_kb:
-        print(f"📚 Found existing knowledge base with {len(existing_kb)} pages")
+        print(f" Found existing knowledge base with {len(existing_kb)} pages")
         response = input("Do you want to re-scrape? (y/N): ").strip().lower()
         if response != 'y':
-            print("✅ Using existing knowledge base")
+            print("Using existing knowledge base")
             return
     
     print("🚀 Starting web scraping...")
@@ -242,8 +242,8 @@ async def main():
         end_time = time.time()
         duration = end_time - start_time
         
-        print(f"\n✅ Scraping completed!")
-        print(f"📊 Statistics:")
+        print(f"\n Scraping completed!")
+        print(f" Statistics:")
         print(f"   - Total pages scraped: {len(pages)}")
         print(f"   - Time taken: {duration:.2f} seconds")
         print(f"   - Average time per page: {duration/len(pages):.2f} seconds")
@@ -257,9 +257,9 @@ async def main():
             print(f"   - Content length: {len(sample['content'])} characters")
         
     except KeyboardInterrupt:
-        print("\n⚠️  Scraping interrupted by user")
+        print("\n  Scraping interrupted by user")
     except Exception as e:
-        print(f"\n❌ Error during scraping: {str(e)}")
+        print(f"\n Error during scraping: {str(e)}")
 
 if __name__ == "__main__":
     asyncio.run(main())
