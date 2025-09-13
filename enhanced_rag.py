@@ -1,4 +1,3 @@
-
 import os
 import json
 import asyncio
@@ -208,7 +207,7 @@ Documentation Context:
 
 Instructions:
 - Provide a direct, helpful, and detailed answer
-- Use the context to inform your response
+- Use the context to inform your response and be sure about it
 - Be specific about steps, requirements, and configurations when applicable
 - If the question is about troubleshooting, include common solutions
 - If the question is about setup/configuration, provide step-by-step guidance
