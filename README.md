@@ -1,13 +1,3 @@
----
-title: Atlan Customer Support Copilot
-emoji: 🎯
-colorFrom: blue
-colorTo: purple
-sdk: docker
-app_port: 7860
-pinned: false
-license: mit
----
 
 # 🎯 Atlan Customer Support Copilot
 
@@ -44,7 +34,7 @@ An enterprise-grade AI customer support system that automatically classifies sup
 
 ## 🚀 Live Demo
 
-**[View Live Application →](https://streamlit-deployment-url.com)**
+**[View Live Application →](https://huggingface.co/spaces/majorSeaweed/atlan)**
 
 ## 🛠️ Technology Stack
 
