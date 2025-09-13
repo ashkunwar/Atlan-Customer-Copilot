@@ -1,4 +1,3 @@
-
 #  Atlan Customer Support Copilot
 
 **AI-Powered Intelligent Support Ticket Classification & Response System**
@@ -7,20 +6,24 @@
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
 [![Groq](https://img.shields.io/badge/Groq-FF6B6B?style=for-the-badge&logo=ai&logoColor=white)](https://groq.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-HuggingFace%20Spaces-brightgreen?style=for-the-badge)](https://huggingface.co/spaces/majorSeaweed/atlan)
 
 ## Executive Summary
 
 This enterprise-grade AI customer support system revolutionizes ticket management by automatically classifying support requests, determining priority levels, analyzing customer sentiment, and providing intelligent responses using advanced RAG (Retrieval-Augmented Generation) technology. Built specifically for Atlan's data catalog platform, it demonstrates how AI can transform customer support operations.
 
+**Live application:** https://huggingface.co/spaces/majorSeaweed/atlan
+
 ## 🏗️ System Architecture
 
+```mermaid
 %%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'fontFamily': 'Inter, Segoe UI, Helvetica, Arial, sans-serif',
-    'primaryTextColor': '#111827',
-    'lineColor': '#64748b',
-    'edgeLabelBackground': '#ffffff'
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Inter, Segoe UI, Helvetica, Arial, sans-serif",
+    "primaryTextColor": "#111827",
+    "lineColor": "#64748b",
+    "edgeLabelBackground": "#ffffff"
   }
 }}%%
 flowchart LR
