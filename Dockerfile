@@ -1,6 +1,3 @@
-# Read the doc: https://huggingface.co/docs/hub/spaces-sdks-docker
-# Dockerfile for Atlan Customer Support Copilot on Hugging Face Spaces
-
 FROM python:3.9-slim
 
 # Create user with specific UID for Hugging Face Spaces
