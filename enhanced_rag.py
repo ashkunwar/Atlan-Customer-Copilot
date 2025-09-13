@@ -220,7 +220,7 @@ Format your response as a comprehensive answer that directly addresses the user'
         
         try:
             response = self.groq_client.chat.completions.create(
-                model="openai/gpt-oss-120b", 
+                model="moonshotai/kimi-k2-instruct-0905", 
                 messages=[
                     {"role": "system", "content": "You are an expert Atlan support agent. Provide helpful, accurate responses based on the documentation context."},
                     {"role": "user", "content": prompt}
@@ -242,30 +242,30 @@ Format your response as a comprehensive answer that directly addresses the user'
             raise
 
 def setup_rag_system():
-    print("🤖 Setting up Enhanced RAG System...")
+    print("Setting up Enhanced RAG System...")
     print("=" * 45)
     
     kb_file = Path("atlan_knowledge_base.json")
     db_file = Path("atlan_vector_db.pkl")
     
     if not kb_file.exists():
-        print("📚 Knowledge base not found. Please run the scraper first:")
-        print("   python scraper.py")
+        print("Knowledge base not found. Please run the scraper first")
+        print(" python scraper.py")
         return False
     
     if not db_file.exists():
-        print("🔧 Vector database not found. Building from knowledge base...")
+        print("Vector database not found. Building from knowledge base...")
         from vector_db import build_vector_database
         vector_db = build_vector_database()
         if not vector_db:
-            print("❌ Failed to build vector database")
+            print("Failed to build vector database")
             return False
     
-    print("✅ RAG system ready!")
+    print("RAG system correct!")
     return True
 
 async def test_rag_pipeline():
-    print("\n🧪 Testing Enhanced RAG Pipeline...")
+    print("\nTesting Enhanced RAG Pipeline...")
     print("=" * 40)
     
     rag = EnhancedRAGPipeline()
@@ -295,4 +295,4 @@ if __name__ == "__main__":
     if setup_rag_system():
         asyncio.run(test_rag_pipeline())
     else:
-        print("❌ RAG system setup failed")
+        print("RAG system setup failed")
