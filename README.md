@@ -1,5 +1,5 @@
 
-# 🎯 Atlan Customer Support Copilot
+#  Atlan Customer Support Copilot
 
 **AI-Powered Intelligent Support Ticket Classification & Response System**
 
@@ -8,7 +8,7 @@
 [![Groq](https://img.shields.io/badge/Groq-FF6B6B?style=for-the-badge&logo=ai&logoColor=white)](https://groq.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 
-## 📋 Executive Summary
+## Executive Summary
 
 This enterprise-grade AI customer support system revolutionizes ticket management by automatically classifying support requests, determining priority levels, analyzing customer sentiment, and providing intelligent responses using advanced RAG (Retrieval-Augmented Generation) technology. Built specifically for Atlan's data catalog platform, it demonstrates how AI can transform customer support operations.
 
@@ -61,7 +61,7 @@ graph TB
     class GROQ,DOCS,ST external
 ```
 
-## 📁 Project Structure **[VERIFIED]**
+## 📁 Project Structure 
 
 Based on thorough codebase analysis:
 
@@ -99,7 +99,7 @@ Atlan-Customer-Copilot/
         └── README.md                # This comprehensive guide
 ```
 
-## ✨ Key Features **[VERIFIED]**
+## ✨ Key Features 
 
 ### 🤖 **Intelligent Ticket Classification**
 - **Multi-Topic Detection**: 14 topic categories defined in `TopicTagEnum`
@@ -119,7 +119,7 @@ Atlan-Customer-Copilot/
 - **Docker Support**: Multi-stage builds optimized for HuggingFace Spaces
 - **Error Handling**: Comprehensive fallback mechanisms throughout
 
-## 🛠️ Technology Stack **[VERIFIED]**
+## 🛠️ Technology Stack 
 
 | Component | Technology | Version | Purpose |
 |-----------|------------|---------|---------|
@@ -177,7 +177,7 @@ Atlan-Customer-Copilot/
 - ✅ Transparent source tracking
 - ❌ Additional complexity in routing logic
 
-## 🚀 Local Setup & Installation **[VERIFIED]**
+## 🚀 Local Setup & Installation 
 
 ### Prerequisites
 - Python 3.9 (specified in `.python-version`)
@@ -240,7 +240,7 @@ python main.py
 docker build -t atlan-copilot .
 docker run -p 7860:7860 -e GROQ_API_KEY=your_key_here atlan-copilot
 ```
-## 🎯 Usage Examples **[VERIFIED FROM CODE]**
+## 🎯 Usage Examples 
 
 ### 1. Single Ticket Classification
 ```python
@@ -353,7 +353,7 @@ From `sample_tickets.json`:
 - **Customer Satisfaction**: 40% improvement in response times
 - **Scalability**: Handle 10x ticket volume with same team
 
-## 🐛 Troubleshooting **[VERIFIED SCENARIOS]**
+## 🐛 Troubleshooting 
 
 ### Common Issues
 
@@ -440,9 +440,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Team & Acknowledgments
 
-**Developed by**: [Your Name]  
+**Developed by**: Ashank Kunwar  
 **Organization**: Atlan Internship Program  
-**Development Period**: [Timeline]
+
 
 **Special Thanks**:
 - Atlan team for providing documentation and domain expertise
