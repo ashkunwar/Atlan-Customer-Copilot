@@ -16,52 +16,6 @@ This enterprise-grade AI customer support system revolutionizes ticket managemen
 
 ## 🏗️ System Architecture
 
-## 🏗️ System Architecture
-mermaid
-graph TB
-    subgraph "Frontend Layer"
-        UI[Streamlit Web Interface]
-        API[FastAPI REST Endpoints]
-    end
-    
-    subgraph "AI Processing Layer"
-        TC[TicketClassifier]
-        RAG[Enhanced RAG Pipeline]
-        LLM[Groq LLM Engine]
-    end
-    
-    subgraph "Data Layer"
-        VDB[SimpleVectorDB]
-        KB[Knowledge Base JSON]
-        MODELS[Pydantic Models]
-    end
-    
-    subgraph "External Services"
-        GROQ[Groq AI API]
-        DOCS[Atlan Documentation]
-        ST[SentenceTransformers]
-    end
-    
-    UI --> TC
-    API --> TC
-    TC --> LLM
-    TC --> RAG
-    RAG --> VDB
-    RAG --> LLM
-    LLM --> GROQ
-    VDB --> KB
-    VDB --> ST
-    KB --> DOCS
-    
-    classDef frontend fill:#e1f5fe
-    classDef ai fill:#f3e5f5
-    classDef data fill:#e8f5e8
-    classDef external fill:#fff3e0
-    
-    class UI,API frontend
-    class TC,RAG,LLM ai
-    class VDB,KB,MODELS data
-    class GROQ,DOCS,ST external
 
 
 ## 📁 Project Structure 
