@@ -34,7 +34,7 @@ class TicketClassifier:
         
         prompt = f"""
 You are an expert customer support analyst for Atlan, a data catalog and governance platform. 
-Analyze the following support ticket and provide a classification.
+Analyze the following support ticket and provide a classification.You give a factual response.
 
 TICKET DETAILS:
 ID: {ticket.id}
