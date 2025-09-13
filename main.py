@@ -24,7 +24,7 @@ load_dotenv()
 
 app = FastAPI(
     title="Atlan Customer Support Copilot",
-    description="AI-powered ticket classification and response generation",
+    description="AI-powered ticket classification and Response generation",
     version="1.0.0"
 )
 
