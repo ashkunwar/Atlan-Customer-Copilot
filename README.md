@@ -238,7 +238,7 @@ LOG_LEVEL=INFO
 
 ### Step 5: Run Application
 
-#### Option A: Streamlit Interface (Recommended)
+#### Option A: Streamlit Interface 
 ```bash
 streamlit run app.py
 ```
@@ -333,7 +333,7 @@ sample_ticket = Ticket(**tickets[0])
 result = await classifier.classify_ticket(sample_ticket)
 ```
 
-## 📊 Performance Metrics **[BASED ON IMPLEMENTATION]**
+## 📊 Performance Metrics 
 
 | Metric | Value | Source |
 |--------|-------|--------|
@@ -471,11 +471,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**🎯 Atlan Customer Support Copilot** - *Transforming Customer Support with AI*
 
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/ashkunwar/Atlan-Customer-Copilot)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://huggingface.co/spaces/majorSeaweed/atlan)
-
-*Built with ❤️ for intelligent customer support automation*
 
 </div>
