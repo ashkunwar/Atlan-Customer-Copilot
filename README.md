@@ -14,7 +14,8 @@ This enterprise-grade AI customer support system revolutionizes ticket managemen
 **Live application:** https://huggingface.co/spaces/majorSeaweed/atlan
 
 ## 🏗️ System Architecture
-<img width="1536" height="1024" alt="Architecture image" src="https://github.com/user-attachments/assets/fa731604-5e70-4341-9b08-c3d73f4a8c29" />
+
+<img width="1217" height="743" alt="System Architecture" src="https://github.com/user-attachments/assets/850758d7-b9b7-4956-bbc5-ab3d9e91bd44" />
 
 
 
