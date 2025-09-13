@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 class TicketClassifier:
     def __init__(self):
-        # Get API key from environment
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             logger.error("GROQ_API_KEY environment variable not found")
@@ -18,7 +17,6 @@ class TicketClassifier:
         
         try:
             self.client = Groq(api_key=api_key)
-            # Use the more reliable model for classification
             self.models = [
                 "moonshotai/kimi-k2-instruct-0905"
             ]
@@ -78,7 +76,6 @@ Ensure your response is valid JSON and uses only the exact values from the lists
         return prompt
 
     def _normalize_topic_tags(self, tags):
-        """Normalize topic tags to match enum values."""
         normalized_tags = []
         
         for tag in tags:
@@ -105,7 +102,6 @@ Ensure your response is valid JSON and uses only the exact values from the lists
         return normalized_tags or [TopicTagEnum.PRODUCT]
 
     def _normalize_sentiment(self, sentiment):
-        """Normalize sentiment to match enum values."""
         try:
             return SentimentEnum(sentiment)
         except ValueError:
@@ -120,7 +116,6 @@ Ensure your response is valid JSON and uses only the exact values from the lists
                 return SentimentEnum.NEUTRAL
 
     def _normalize_priority(self, priority):
-        """Normalize priority to match enum values."""
         try:
             return PriorityEnum(priority)
         except ValueError:
@@ -130,10 +125,9 @@ Ensure your response is valid JSON and uses only the exact values from the lists
             elif 'p2' in priority_lower or 'low' in priority_lower:
                 return PriorityEnum.P2
             else:
-                return PriorityEnum.P1  # Default to medium
+                return PriorityEnum.P1
 
     async def classify_ticket(self, ticket: Ticket) -> TicketClassification:
-        """Classify a single ticket using Groq API."""
         for model in self.models:
             try:
                 prompt = self._create_classification_prompt(ticket)
@@ -154,11 +148,9 @@ Ensure your response is valid JSON and uses only the exact values from the lists
                     max_tokens=500
                 )
                 
-                # Extract and parse the response
                 content = response.choices[0].message.content.strip()
                 logger.info(f"Raw AI response for ticket {ticket.id} using model {model}: {content}")
                 
-                # Try to extract JSON from the response
                 if content.startswith("```json"):
                     content = content[7:-3].strip()
                 elif content.startswith("```"):
@@ -168,14 +160,12 @@ Ensure your response is valid JSON and uses only the exact values from the lists
                     classification_data = json.loads(content)
                 except json.JSONDecodeError as e:
                     logger.error(f"JSON decode error for ticket {ticket.id} using model {model}: {e}")
-                    continue  # Try next model
+                    continue
                 
-                # Normalize and validate the classification data
                 topic_tags = self._normalize_topic_tags(classification_data.get("topic_tags", ["Product"]))
                 sentiment = self._normalize_sentiment(classification_data.get("sentiment", "Neutral"))
                 priority = self._normalize_priority(classification_data.get("priority", "P1"))
                 
-                # Validate and convert the classification
                 return TicketClassification(
                     topic_tags=topic_tags,
                     sentiment=sentiment,
@@ -185,9 +175,8 @@ Ensure your response is valid JSON and uses only the exact values from the lists
                 
             except Exception as e:
                 logger.error(f"Error classifying ticket {ticket.id} with model {model}: {str(e)}")
-                continue  # Try next model
+                continue
         
-        # If all models fail, return fallback classification
         logger.error(f"All models failed for ticket {ticket.id}, using fallback")
         return TicketClassification(
             topic_tags=[TopicTagEnum.PRODUCT],
@@ -197,7 +186,6 @@ Ensure your response is valid JSON and uses only the exact values from the lists
         )
 
     async def classify_tickets_bulk(self, tickets: List[Ticket]) -> List[TicketClassification]:
-        """Classify multiple tickets."""
         classifications = []
         
         for ticket in tickets:

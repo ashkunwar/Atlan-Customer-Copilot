@@ -27,7 +27,6 @@ class AtlanDocScraper:
         self.delay_between_requests = 1
         
     async def create_session(self):
-        """Create an aiohttp session with proper headers"""
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -39,31 +38,24 @@ class AtlanDocScraper:
         self.session = aiohttp.ClientSession(headers=headers, timeout=timeout)
     
     async def close_session(self):
-        """Close the aiohttp session"""
         if self.session:
             await self.session.close()
     
     def clean_text(self, text: str) -> str:
-        """Clean and normalize text content"""
         if not text:
             return ""
         
-        # Remove extra whitespace and normalize
         text = re.sub(r'\s+', ' ', text.strip())
         
-        # Remove common navigation elements
         text = re.sub(r'(Home|Navigation|Menu|Footer|Header|Sidebar)', '', text, flags=re.IGNORECASE)
         
-        # Remove very short content
         if len(text) < 50:
             return ""
             
         return text
     
     def extract_main_content(self, soup: BeautifulSoup) -> str:
-        """Extract main content from HTML, focusing on documentation"""
         
-        # Try to find main content areas
         content_selectors = [
             'main',
             'article', 
@@ -84,9 +76,7 @@ class AtlanDocScraper:
                 main_content = content_elem.get_text(separator=' ', strip=True)
                 break
         
-        # Fallback: get all text but filter out navigation
         if not main_content:
-            # Remove navigation, footer, header elements
             for tag in soup.find_all(['nav', 'footer', 'header', 'aside']):
                 tag.decompose()
             
@@ -95,26 +85,22 @@ class AtlanDocScraper:
         return self.clean_text(main_content)
     
     def extract_links(self, soup: BeautifulSoup, base_url: str) -> List[str]:
-        """Extract relevant internal links from the page"""
         links = []
         
         for link in soup.find_all('a', href=True):
             href = link['href']
             full_url = urljoin(base_url, href)
             
-            # Only include links from the same domain
             if urlparse(full_url).netloc in [urlparse(url).netloc for url in self.base_urls.values()]:
-                # Filter out non-documentation links
                 if not any(skip in full_url.lower() for skip in ['#', 'mailto:', 'tel:', 'javascript:']):
                     links.append(full_url)
         
-        return list(set(links))  # Remove duplicates
+        return list(set(links))
     
     async def scrape_page(self, url: str) -> Dict:
-        """Scrape a single page and extract content"""
         if url in self.scraped_urls:
             return None
-        
+
         try:
             logger.info(f"Scraping: {url}")
             
@@ -126,18 +112,15 @@ class AtlanDocScraper:
                 html = await response.text()
                 soup = BeautifulSoup(html, 'html.parser')
                 
-                # Extract metadata
                 title = soup.find('title')
                 title_text = title.get_text().strip() if title else ""
                 
-                # Extract main content
                 content = self.extract_main_content(soup)
                 
                 if not content:
                     logger.warning(f"No content extracted from {url}")
                     return None
                 
-                # Extract links for further crawling
                 links = self.extract_links(soup, url)
                 
                 self.scraped_urls.add(url)
@@ -156,7 +139,6 @@ class AtlanDocScraper:
             return None
     
     async def crawl_site(self, base_url: str, max_pages: int = 50) -> List[Dict]:
-        """Crawl a site starting from base URL"""
         pages_data = []
         urls_to_visit = [base_url]
         visited = set()
@@ -169,24 +151,20 @@ class AtlanDocScraper:
                 
             visited.add(current_url)
             
-            # Scrape the page
             page_data = await self.scrape_page(current_url)
             
             if page_data:
                 pages_data.append(page_data)
                 
-                # Add new links to visit (limit to avoid infinite crawling)
                 new_links = [link for link in page_data['links'] 
                            if link not in visited and link not in urls_to_visit]
-                urls_to_visit.extend(new_links[:10])  # Limit new links per page
+                urls_to_visit.extend(new_links[:10])
             
-            # Be respectful - add delay between requests
             await asyncio.sleep(self.delay_between_requests)
         
         return pages_data
     
     async def scrape_all_sites(self) -> List[Dict]:
-        """Scrape all configured sites"""
         await self.create_session()
         
         try:
@@ -198,7 +176,6 @@ class AtlanDocScraper:
                 all_pages.extend(site_pages)
                 logger.info(f"Scraped {len(site_pages)} pages from {site_name}")
                 
-                # Delay between sites
                 await asyncio.sleep(2)
             
             self.knowledge_base = all_pages
@@ -208,7 +185,6 @@ class AtlanDocScraper:
             await self.close_session()
     
     def save_knowledge_base(self, filename: str = "atlan_knowledge_base.json"):
-        """Save the scraped knowledge base to a JSON file"""
         output_path = Path(filename)
         
         with open(output_path, 'w', encoding='utf-8') as f:
@@ -217,7 +193,6 @@ class AtlanDocScraper:
         logger.info(f"Knowledge base saved to {output_path}")
         logger.info(f"Total pages: {len(self.knowledge_base)}")
         
-        # Print summary statistics
         source_counts = {}
         for page in self.knowledge_base:
             source = page.get('source', 'unknown')
@@ -226,7 +201,6 @@ class AtlanDocScraper:
         logger.info(f"Pages by source: {source_counts}")
     
     def load_knowledge_base(self, filename: str = "atlan_knowledge_base.json") -> List[Dict]:
-        """Load existing knowledge base from file"""
         try:
             with open(filename, 'r', encoding='utf-8') as f:
                 self.knowledge_base = json.load(f)
@@ -243,7 +217,7 @@ async def main():
     """Main function to run the scraper"""
     scraper = AtlanDocScraper()
     
-    print("🕷️  Starting Atlan Documentation Scraper...")
+    print(" Starting Atlan Documentation Scraper...")
     print("=" * 50)
     
     # Check if knowledge base already exists

@@ -22,15 +22,11 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Function to get API key from multiple sources
 def get_groq_api_key():
-    """Get GROQ API key from environment variables or Streamlit secrets"""
-    # Try environment variable first (HF Spaces and Docker way)
     api_key = os.getenv('GROQ_API_KEY')
     if api_key:
         return api_key
     
-    # Try Streamlit secrets as fallback (for Streamlit Cloud)
     try:
         if hasattr(st, 'secrets') and 'GROQ_API_KEY' in st.secrets:
             return st.secrets['GROQ_API_KEY']
@@ -39,7 +35,6 @@ def get_groq_api_key():
     
     return None
 
-# Check API key availability
 groq_api_key = get_groq_api_key()
 
 if not groq_api_key:
@@ -63,20 +58,9 @@ if not groq_api_key:
     """)
     st.stop()
 else:
-    # Set the API key in environment for other modules
     os.environ['GROQ_API_KEY'] = groq_api_key
     st.success("🔑 API key loaded successfully")
 
-try:
-    from models import Ticket, TicketClassification, TopicTagEnum, SentimentEnum, PriorityEnum
-    from classifier import TicketClassifier
-    from enhanced_rag import EnhancedRAGPipeline
-except ImportError as e:
-    st.error(f"❌ Failed to import required modules: {e}")
-    st.error("Please ensure all required files are present")
-    st.stop()
-
-# Import application modules after environment setup
 try:
     from models import Ticket, TicketClassification, TopicTagEnum, SentimentEnum, PriorityEnum
     from classifier import TicketClassifier
@@ -140,7 +124,6 @@ def load_sample_tickets():
         return [Ticket(**ticket_data) for ticket_data in tickets_data]
     except FileNotFoundError:
         st.warning("📋 Sample tickets file not found. Using demo data for cloud deployment.")
-        # Create minimal demo data for cloud deployment
         demo_tickets = [
             {
                 "id": "DEMO-001",
@@ -191,12 +174,10 @@ def calculate_stats(classified_tickets):
     frustrated = sum(1 for _, classification in classified_tickets 
                     if classification.sentiment in [SentimentEnum.FRUSTRATED, SentimentEnum.ANGRY])
     
-    # Count RAG-eligible topics
     rag_topics = ['How-to', 'Product', 'Best practices', 'API/SDK', 'SSO']
     rag_eligible = sum(1 for _, classification in classified_tickets 
                       if any(tag.value in rag_topics for tag in classification.topic_tags))
     
-    # Count tag frequencies
     tag_counts = {}
     for _, classification in classified_tickets:
         for tag in classification.topic_tags:
@@ -267,15 +248,12 @@ def main():
         upload_classify_page(classifier)
 
 def bulk_dashboard_page(classifier):
-    """Bulk classification dashboard page"""
     st.header("📊 Bulk Classification Dashboard")
     st.subheader("Auto-loaded sample tickets with AI classification")
     
-    # Initialize session state for bulk results
     if 'bulk_results' not in st.session_state:
         st.session_state.bulk_results = None
     
-    # Auto-load bulk results
     if st.session_state.bulk_results is None:
         with st.spinner("🔄 Loading and classifying sample tickets..."):
             tickets = load_sample_tickets()
@@ -306,12 +284,10 @@ def bulk_dashboard_page(classifier):
         with col5:
             st.metric("🏷️ Top Topic", stats['most_common_tag'])
         
-        # Visualizations
         if stats['tag_counts']:
             col1, col2 = st.columns(2)
             
             with col1:
-                # Priority distribution
                 priority_data = {}
                 for _, classification in st.session_state.bulk_results:
                     priority = classification.priority.value
@@ -330,7 +306,6 @@ def bulk_dashboard_page(classifier):
                 st.plotly_chart(fig_priority, use_container_width=True)
             
             with col2:
-                # Topic distribution
                 fig_tags = px.bar(
                     x=list(stats['tag_counts'].values()),
                     y=list(stats['tag_counts'].keys()),
@@ -341,7 +316,6 @@ def bulk_dashboard_page(classifier):
                 fig_tags.update_layout(height=400)
                 st.plotly_chart(fig_tags, use_container_width=True)
         
-        # Display tickets with filters
         st.subheader("📋 All Classified Tickets")
         
         col1, col2, col3 = st.columns(3)
@@ -355,7 +329,6 @@ def bulk_dashboard_page(classifier):
             topic_filter = st.selectbox("Filter by Topic", 
                 ["All"] + [t.value for t in TopicTagEnum])
         
-        # Apply filters
         filtered_results = st.session_state.bulk_results
         if priority_filter != "All":
             filtered_results = [(t, c) for t, c in filtered_results if c.priority.value == priority_filter]
@@ -366,21 +339,17 @@ def bulk_dashboard_page(classifier):
         
         st.info(f"Showing {len(filtered_results)} of {len(st.session_state.bulk_results)} tickets")
         
-        # Display filtered tickets
         for ticket, classification in filtered_results:
             display_ticket_card(ticket, classification)
     
-    # Refresh button
     if st.button("🔄 Refresh Classifications"):
         st.session_state.bulk_results = None
         st.rerun()
 
 def interactive_agent_page(classifier, rag_pipeline):
-    """Interactive AI agent page"""
     st.header("🤖 Interactive AI Agent")
     st.subheader("Submit a new ticket or question from any channel")
     
-    # Input form
     with st.form("interactive_form"):
         question = st.text_area(
             "Customer Question or Ticket:",
@@ -398,17 +367,13 @@ def interactive_agent_page(classifier, rag_pipeline):
     if submit_button and question:
         with st.spinner("🤖 Analyzing question and generating response..."):
             try:
-                # Create a dummy ticket for classification
                 ticket = Ticket(id="INTERACTIVE-001", subject=question[:80], body=question)
                 
-                # Classify the ticket
                 classification = run_async(classifier.classify_ticket(ticket))
                 topic_tags = [tag.value for tag in classification.topic_tags]
                 
-                # Generate response using RAG pipeline
                 rag_result = run_async(rag_pipeline.generate_answer(question, topic_tags))
                 
-                # Display results in two columns
                 col1, col2 = st.columns(2)
                 
                 with col1:
@@ -443,7 +408,6 @@ def interactive_agent_page(classifier, rag_pipeline):
                 st.error(f"❌ Error processing question: {e}")
 
 def single_ticket_page(classifier):
-    """Single ticket classification page"""
     st.header("📝 Single Ticket Classification")
     
     with st.form("single_ticket_form"):
@@ -466,7 +430,6 @@ def single_ticket_page(classifier):
                 st.error(f"❌ Error classifying ticket: {e}")
 
 def upload_classify_page(classifier):
-    """Upload and classify page"""
     st.header("📂 Upload & Classify Tickets")
     
     uploaded_file = st.file_uploader("Choose a JSON file", type="json")
@@ -485,7 +448,6 @@ def upload_classify_page(classifier):
                         
                         st.success(f"✅ Successfully classified {len(classified_tickets)} tickets!")
                         
-                        # Display statistics
                         stats = calculate_stats(classified_tickets)
                         col1, col2, col3, col4 = st.columns(4)
                         with col1:
@@ -497,7 +459,6 @@ def upload_classify_page(classifier):
                         with col4:
                             st.metric("RAG-Eligible", stats['rag_eligible'])
                         
-                        # Display tickets
                         for ticket, classification in classified_tickets:
                             display_ticket_card(ticket, classification)
                             
@@ -507,9 +468,7 @@ def upload_classify_page(classifier):
         except Exception as e:
             st.error(f"❌ Error loading file: {e}")
 
-# Footer
 def show_footer():
-    """Display footer"""
     st.markdown("---")
     st.markdown("""
     <div style="text-align: center; color: #666; padding: 1rem;">
@@ -518,7 +477,6 @@ def show_footer():
     </div>
     """, unsafe_allow_html=True)
 
-# Run the app
 if __name__ == "__main__":
     main()
     show_footer()

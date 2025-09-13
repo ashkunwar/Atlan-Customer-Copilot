@@ -21,11 +21,9 @@ class EnhancedRAGPipeline:
     def initialize_vector_db(self):
         self.vector_db = SimpleVectorDB()
         
-        # Try to load existing database
         if not self.vector_db.load_database():
             logger.info("No existing vector database found. Checking for knowledge base...")
             
-            # Try to load from knowledge base
             if Path(self.knowledge_base_file).exists():
                 logger.info("Found knowledge base. Building vector database...")
                 if self.vector_db.load_knowledge_base(self.knowledge_base_file):
@@ -38,16 +36,13 @@ class EnhancedRAGPipeline:
                 logger.warning("No knowledge base found. RAG will use fallback responses.")
     
     def is_rag_available(self) -> bool:
-        """Check if RAG system is properly initialized"""
         return self.vector_db is not None and len(self.vector_db.documents) > 0
     
     def should_use_rag(self, topic_tags: List[str]) -> bool:
-        """Determine if RAG should be used based on topic tags"""
         rag_topics = ["How-to", "Product", "Best practices", "API/SDK", "SSO"]
         return any(tag in rag_topics for tag in topic_tags)
     
     def get_relevant_context(self, question: str, max_chars: int = 3000) -> Tuple[str, List[str]]:
-        """Get relevant context from the vector database"""
         if not self.is_rag_available():
             return self._get_fallback_context(question), self._get_fallback_sources()
         
@@ -64,7 +59,6 @@ class EnhancedRAGPipeline:
             return self._get_fallback_context(question), self._get_fallback_sources()
     
     def _get_fallback_context(self, question: str) -> str:
-        """Provide fallback context when vector DB is not available"""
         question_lower = question.lower()
         
         if "snowflake" in question_lower and "connect" in question_lower:
@@ -166,7 +160,6 @@ class EnhancedRAGPipeline:
             """
     
     def _get_fallback_sources(self) -> List[str]:
-        """Provide fallback sources when vector DB is not available"""
         return [
             "https://docs.atlan.com/",
             "https://developer.atlan.com/",
@@ -175,7 +168,6 @@ class EnhancedRAGPipeline:
         ]
     
     async def generate_answer(self, question: str, topic_tags: List[str]) -> Dict:
-        """Generate an answer using RAG pipeline"""
         
         if not self.should_use_rag(topic_tags):
             return {
@@ -183,25 +175,21 @@ class EnhancedRAGPipeline:
                 "message": f"This ticket has been classified as a '{topic_tags[0] if topic_tags else 'General'}' issue and routed to the appropriate team."
             }
         
-        # Get relevant context
         context, sources = self.get_relevant_context(question)
         
         if not self.groq_client:
-            # Fallback response without LLM
             return {
                 "type": "direct_answer",
                 "answer": f"Based on the documentation, here's information about your question: {context[:500]}...",
                 "sources": sources
             }
         
-        # Generate response using LLM
         try:
             response = await self._generate_llm_response(question, context, sources)
             return response
         
         except Exception as e:
             logger.error(f"Error generating LLM response: {str(e)}")
-            # Fallback to context-based response
             return {
                 "type": "direct_answer", 
                 "answer": f"Based on the available documentation: {context[:800]}",
@@ -209,7 +197,6 @@ class EnhancedRAGPipeline:
             }
     
     async def _generate_llm_response(self, question: str, context: str, sources: List[str]) -> Dict:
-        """Generate response using the LLM with retrieved context"""
         
         prompt = f"""
 You are an expert Atlan support agent. Use the provided documentation context to answer the user's question comprehensively and accurately.
@@ -256,11 +243,9 @@ Format your response as a comprehensive answer that directly addresses the user'
             raise
 
 def setup_rag_system():
-    """Setup the RAG system - run scraper if needed"""
     print("🤖 Setting up Enhanced RAG System...")
     print("=" * 45)
     
-    # Check if knowledge base exists
     kb_file = Path("atlan_knowledge_base.json")
     db_file = Path("atlan_vector_db.pkl")
     
@@ -281,11 +266,9 @@ def setup_rag_system():
     return True
 
 async def test_rag_pipeline():
-    """Test the RAG pipeline"""
     print("\n🧪 Testing Enhanced RAG Pipeline...")
     print("=" * 40)
     
-    # Initialize without Groq client for testing
     rag = EnhancedRAGPipeline()
     
     test_questions = [

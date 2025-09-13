@@ -6,7 +6,6 @@ from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from dotenv import load_dotenv
 import uvicorn
-import httpx
 
 from models import (
     Ticket, 
@@ -18,50 +17,38 @@ from models import (
 )
 from classifier import TicketClassifier
 
-# Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load environment variables
 load_dotenv()
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Atlan Customer Support Copilot",
     description="AI-powered ticket classification and response generation",
     version="1.0.0"
 )
 
-# Initialize the classifier
 classifier = TicketClassifier()
 
 async def rag_pipeline(question: str, topic_tags: List[str]) -> Dict:
-    """Enhanced RAG pipeline with proper knowledge retrieval"""
     try:
-        # Import the enhanced RAG system
         from enhanced_rag import EnhancedRAGPipeline
         
-        # Initialize RAG pipeline with Groq client from classifier
         rag = EnhancedRAGPipeline(groq_client=classifier.client)
         
-        # Generate answer using the enhanced pipeline
         result = await rag.generate_answer(question, topic_tags)
         return result
         
     except ImportError as e:
         logger.warning(f"Enhanced RAG system not available: {e}")
-        # Fallback to basic routing if enhanced RAG fails
         return await fallback_rag_pipeline(question, topic_tags)
     
     except Exception as e:
         logger.error(f"RAG pipeline error: {e}")
-        # Fallback to basic routing if enhanced RAG fails
         return await fallback_rag_pipeline(question, topic_tags)
 
 async def fallback_rag_pipeline(question: str, topic_tags: List[str]) -> Dict:
-    """Fallback RAG pipeline for when enhanced system is not available"""
     if any(tag in ["How-to", "Product", "Best practices", "API/SDK", "SSO"] for tag in topic_tags):
-        # Basic knowledge responses
         context = f"Based on Atlan documentation for topics: {', '.join(topic_tags)}"
         
         return {
@@ -77,7 +64,6 @@ async def fallback_rag_pipeline(question: str, topic_tags: List[str]) -> Dict:
 
 @app.get("/")
 async def root():
-    """API root endpoint."""
     return {
         "message": "Atlan Customer Support Copilot API",
         "version": "1.0.0",
@@ -93,7 +79,6 @@ async def root():
 
 @app.post("/classify-single", response_model=ClassificationResponse)
 async def classify_single_ticket(request: SingleTicketRequest):
-    """Classify a single support ticket."""
     try:
         classification = await classifier.classify_ticket(request.ticket)
         classified_ticket = ClassifiedTicket(
@@ -112,7 +97,6 @@ async def classify_single_ticket(request: SingleTicketRequest):
 
 @app.post("/classify-bulk", response_model=ClassificationResponse)
 async def classify_bulk_tickets(request: BulkTicketRequest):
-    """Classify multiple support tickets."""
     try:
         if not request.tickets:
             raise HTTPException(status_code=400, detail="No tickets provided")
@@ -135,9 +119,7 @@ async def classify_bulk_tickets(request: BulkTicketRequest):
 
 @app.get("/sample-tickets", response_model=ClassificationResponse)
 async def classify_sample_tickets():
-    """Load and classify the sample tickets from the JSON file."""
     try:
-        # Load sample tickets
         sample_file_path = "sample_tickets.json"
         if not os.path.exists(sample_file_path):
             raise HTTPException(status_code=404, detail="Sample tickets file not found")
@@ -145,10 +127,8 @@ async def classify_sample_tickets():
         with open(sample_file_path, "r") as f:
             tickets_data = json.load(f)
         
-        # Convert to Ticket objects
         tickets = [Ticket(**ticket_data) for ticket_data in tickets_data]
         
-        # Classify all tickets
         classifications = await classifier.classify_tickets_bulk(tickets)
         
         classified_tickets = [
@@ -167,9 +147,7 @@ async def classify_sample_tickets():
 
 @app.get("/bulk-dashboard", response_model=ClassificationResponse)
 async def bulk_dashboard():
-    """Automatically load and classify all sample tickets for the bulk dashboard on page load."""
     try:
-        # Load sample tickets
         sample_file_path = "sample_tickets.json"
         if not os.path.exists(sample_file_path):
             logger.warning(f"Sample tickets file not found: {sample_file_path}")
@@ -184,10 +162,8 @@ async def bulk_dashboard():
         
         logger.info(f"Loaded {len(tickets_data)} sample tickets for bulk processing")
         
-        # Convert to Ticket objects
         tickets = [Ticket(**ticket_data) for ticket_data in tickets_data]
         
-        # Classify all tickets
         classifications = await classifier.classify_tickets_bulk(tickets)
         
         classified_tickets = [
@@ -209,7 +185,6 @@ async def bulk_dashboard():
 
 @app.post("/upload-tickets", response_model=ClassificationResponse)
 async def upload_and_classify_tickets(file: UploadFile = File(...)):
-    """Upload a JSON file and classify the tickets."""
     try:
         if not file.filename.endswith('.json'):
             raise HTTPException(status_code=400, detail="File must be a JSON file")
@@ -217,10 +192,8 @@ async def upload_and_classify_tickets(file: UploadFile = File(...)):
         content = await file.read()
         tickets_data = json.loads(content)
         
-        # Convert to Ticket objects
         tickets = [Ticket(**ticket_data) for ticket_data in tickets_data]
         
-        # Classify all tickets
         classifications = await classifier.classify_tickets_bulk(tickets)
         
         classified_tickets = [
@@ -244,19 +217,17 @@ async def interactive_agent(
     question: str = Form(...),
     channel: str = Form("web")
 ):
-    """Interactive endpoint for new ticket/question submission."""
-    # Create a dummy ticket
     ticket = Ticket(id="INTERACTIVE-001", subject=question[:80], body=question)
     classification = await classifier.classify_ticket(ticket)
     topic_tags = [tag.value for tag in classification.topic_tags]
-    # Internal analysis view
+    
     analysis = {
         "topic_tags": topic_tags,
         "sentiment": classification.sentiment.value,
         "priority": classification.priority.value,
         "reasoning": classification.reasoning
     }
-    # Final response view
+    
     rag_topics = ["How-to", "Product", "Best practices", "API/SDK", "SSO"]
     if any(tag in rag_topics for tag in topic_tags):
         rag_result = await rag_pipeline(question, topic_tags)
@@ -277,7 +248,6 @@ async def interactive_agent(
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
     return {"status": "healthy", "service": "Atlan Customer Support Copilot"}
 
 if __name__ == "__main__":
