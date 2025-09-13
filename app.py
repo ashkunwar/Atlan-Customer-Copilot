@@ -1,7 +1,6 @@
 import streamlit as st
 st.set_page_config(
-    page_title="🎯 Atlan Customer Support Copilot",
-    page_icon="🎯",
+    page_title="Atlan Customer Support Copilot",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -38,7 +37,7 @@ def get_groq_api_key():
 groq_api_key = get_groq_api_key()
 
 if not groq_api_key:
-    st.error("🚨 **GROQ API Key Missing!**")
+    st.error("**GROQ API Key Missing!**")
     st.markdown("""
     ### Please add your GROQ API key:
     
@@ -59,14 +58,14 @@ if not groq_api_key:
     st.stop()
 else:
     os.environ['GROQ_API_KEY'] = groq_api_key
-    st.success("🔑 API key loaded successfully")
+    st.success("API key loaded successfully")
 
 try:
     from models import Ticket, TicketClassification, TopicTagEnum, SentimentEnum, PriorityEnum
     from classifier import TicketClassifier
     from enhanced_rag import EnhancedRAGPipeline
 except ImportError as e:
-    st.error(f"❌ Failed to import required modules: {e}")
+    st.error(f"Failed to import required modules: {e}")
     st.error("Please ensure all required files are present in the directory")
     st.stop()
 
@@ -114,7 +113,7 @@ def initialize_ai_models():
         rag_pipeline = EnhancedRAGPipeline(groq_client=classifier.client)
         return classifier, rag_pipeline
     except Exception as e:
-        st.error(f"❌ Failed to initialize AI models: {e}")
+        st.error(f"Failed to initialize AI models: {e}")
         return None, None
 
 def load_sample_tickets():
@@ -138,7 +137,7 @@ def load_sample_tickets():
         ]
         return [Ticket(**ticket_data) for ticket_data in demo_tickets]
     except Exception as e:
-        st.error(f"❌ Error loading tickets: {e}")
+        st.error(f"Error loading tickets: {e}")
         return []
 
 async def classify_tickets_async(classifier, tickets):
@@ -146,7 +145,7 @@ async def classify_tickets_async(classifier, tickets):
         classifications = await classifier.classify_tickets_bulk(tickets)
         return list(zip(tickets, classifications))
     except Exception as e:
-        st.error(f"❌ Classification error: {e}")
+        st.error(f"Classification error: {e}")
         return []
 
 def run_async(coro):
@@ -446,7 +445,7 @@ def upload_classify_page(classifier):
                     try:
                         classified_tickets = run_async(classify_tickets_async(classifier, tickets))
                         
-                        st.success(f"✅ Successfully classified {len(classified_tickets)} tickets!")
+                        st.success(f"Successfully classified {len(classified_tickets)} tickets!")
                         
                         stats = calculate_stats(classified_tickets)
                         col1, col2, col3, col4 = st.columns(4)
@@ -466,7 +465,7 @@ def upload_classify_page(classifier):
                         st.error(f"❌ Error during classification: {e}")
                         
         except Exception as e:
-            st.error(f"❌ Error loading file: {e}")
+            st.error(f"Error loading file: {e}")
 
 def show_footer():
     st.markdown("---")
