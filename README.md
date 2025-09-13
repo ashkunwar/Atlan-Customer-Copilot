@@ -16,71 +16,57 @@ This enterprise-grade AI customer support system revolutionizes ticket managemen
 
 ## 🏗️ System Architecture
 
-```mermaid
-%%{init: {
-  "theme": "base",
-  "themeVariables": {
-    "fontFamily": "Inter, Segoe UI, Helvetica, Arial, sans-serif",
-    "primaryTextColor": "#111827",
-    "lineColor": "#64748b",
-    "edgeLabelBackground": "#ffffff"
-  }
-}}%%
-flowchart LR
-
-%% ===== LAYERS =====
-subgraph F["Frontend Layer"]
-  UI["🖥️ Streamlit Web Interface"]
-  API["🔌 FastAPI REST Endpoints"]
-end
-
-subgraph A["AI Processing Layer"]
-  TC["🏷️ TicketClassifier"]
-  RAG["📚 Enhanced RAG Pipeline"]
-  LLM["🧠 Groq LLM Engine"]
-end
-
-subgraph D["Data Layer"]
-  VDB["🗂️ SimpleVectorDB"]
-  KB["📄 Knowledge Base (JSON)"]
-  MODELS["🧱 Pydantic Models"]
-end
-
-subgraph X["External Services"]
-  GROQ["⚡ Groq AI API"]
-  DOCS["📖 Atlan Documentation"]
-  ST["🔎 SentenceTransformers"]
-end
-
-%% ===== FLOWS =====
-UI --> TC
-API --> TC
-TC -->|classifies| RAG
-TC -->|prompts| LLM
-RAG -->|retrieves| VDB
-RAG -.uses.-> MODELS
-RAG -->|calls| LLM
-LLM -->|provider| GROQ
-VDB --> KB
-VDB --> ST
-MODELS -.schemas for.-> API
-KB --> DOCS
-
-%% ===== COLORS BY LAYER =====
-classDef frontend fill:#e0f2fe,stroke:#0284c7,color:#111827;
-classDef ai       fill:#f3e8ff,stroke:#7c3aed,color:#111827;
-classDef data     fill:#ecfdf5,stroke:#059669,color:#111827;
-classDef external fill:#fff7ed,stroke:#ea580c,color:#111827;
-
-class UI,API frontend
-class TC,RAG,LLM ai
-class VDB,KB,MODELS data
-class GROQ,DOCS,ST external
+## 🏗️ System Architecture
+mermaid
+graph TB
+    subgraph "Frontend Layer"
+        UI[Streamlit Web Interface]
+        API[FastAPI REST Endpoints]
+    end
+    
+    subgraph "AI Processing Layer"
+        TC[TicketClassifier]
+        RAG[Enhanced RAG Pipeline]
+        LLM[Groq LLM Engine]
+    end
+    
+    subgraph "Data Layer"
+        VDB[SimpleVectorDB]
+        KB[Knowledge Base JSON]
+        MODELS[Pydantic Models]
+    end
+    
+    subgraph "External Services"
+        GROQ[Groq AI API]
+        DOCS[Atlan Documentation]
+        ST[SentenceTransformers]
+    end
+    
+    UI --> TC
+    API --> TC
+    TC --> LLM
+    TC --> RAG
+    RAG --> VDB
+    RAG --> LLM
+    LLM --> GROQ
+    VDB --> KB
+    VDB --> ST
+    KB --> DOCS
+    
+    classDef frontend fill:#e1f5fe
+    classDef ai fill:#f3e5f5
+    classDef data fill:#e8f5e8
+    classDef external fill:#fff3e0
+    
+    class UI,API frontend
+    class TC,RAG,LLM ai
+    class VDB,KB,MODELS data
+    class GROQ,DOCS,ST external
 
 
 ## 📁 Project Structure 
 
-Based on thorough codebase analysis:
+
 
 ```
 Atlan-Customer-Copilot/
