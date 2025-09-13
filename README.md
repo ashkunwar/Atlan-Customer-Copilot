@@ -6,7 +6,6 @@
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
 [![Groq](https://img.shields.io/badge/Groq-FF6B6B?style=for-the-badge&logo=ai&logoColor=white)](https://groq.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-HuggingFace%20Spaces-brightgreen?style=for-the-badge)](https://huggingface.co/spaces/majorSeaweed/atlan)
 
 ## Executive Summary
 
@@ -27,17 +26,17 @@ This enterprise-grade AI customer support system revolutionizes ticket managemen
 Atlan-Customer-Copilot/
 └── 📁 atlan/                          # Main application directory
     ├── 🎯 Core Application Files
-    │   ├── app.py                      # Streamlit web interface (483 lines)
-    │   ├── main.py                     # FastAPI REST endpoints (255 lines)
+    │   ├── app.py                      # Streamlit web interface
+    │   ├── main.py                     # FastAPI REST endpoints 
     │   └── models.py                   # Pydantic data models & enums
     │
     ├── 🤖 AI Processing Engine
     │   ├── classifier.py               # Groq-powered ticket classifier
-    │   ├── enhanced_rag.py            # RAG pipeline (299 lines)
-    │   └── vector_db.py               # SimpleVectorDB implementation (343 lines)
+    │   ├── enhanced_rag.py            # RAG pipeline 
+    │   └── vector_db.py               # SimpleVectorDB implementation 
     │
     ├── 🔧 Data Pipeline & Assets
-    │   ├── scraper.py                 # AtlanDocScraper (264 lines)
+    │   ├── scraper.py                 # AtlanDocScraper 
     │   ├── sample_tickets.json        # 15 realistic test tickets
     │   ├── atlan_knowledge_base.json  # Scraped documentation chunks
     │   └── atlan_vector_db.pkl        # Pre-built vector embeddings
@@ -171,10 +170,6 @@ Create a `.env` file in the `atlan/` directory:
 ```bash
 # Required: Get your free API key from https://console.groq.com/keys
 GROQ_API_KEY=your_groq_api_key_here
-
-# Optional: For development
-DEBUG=True
-LOG_LEVEL=INFO
 ```
 
 ### Step 5: Run Application
