@@ -292,7 +292,7 @@ def build_vector_database():
     vector_db = SimpleVectorDB()
     
     if vector_db.load_database():
-        print(f"✅ Loaded existing vector database with {len(vector_db.documents)} documents")
+        print(f"Loaded existing vector database with {len(vector_db.documents)} documents")
         response = input("Do you want to rebuild? (y/N): ").strip().lower()
         if response != 'y':
             return vector_db
@@ -301,13 +301,13 @@ def build_vector_database():
         print("❌ Failed to load knowledge base. Run scraper first.")
         return None
     
-    print("🧮 Creating embeddings...")
+    print("Creating embeddings...")
     vector_db.create_embeddings()
     
     vector_db.save_database()
     
-    print(f"✅ Vector database built successfully!")
-    print(f"📊 Documents: {len(vector_db.documents)}")
+    print(f" Vector database built successfully!")
+    print(f" Documents: {len(vector_db.documents)}")
     
     return vector_db
 
@@ -337,6 +337,6 @@ if __name__ == "__main__":
     if vector_db:
         test_search(vector_db)
         
-        print(f"\n🎉 Vector database ready for RAG pipeline!")
+        print(f"\n Vector database ready for RAG pipeline!")
     else:
-        print("❌ Failed to build vector database")
+        print("Failed to build vector database")
